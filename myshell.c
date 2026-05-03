@@ -123,22 +123,28 @@ int main(int argc, char **argv){
             }
             //task 2, shell commands:
             //kill(pid,signal)
-            char* stringPid = line->arguments[1];
-            int pid = atoi(stringPid);
             if(strcmp(commandName,"stop") == 0){
+                char* stringPid = line->arguments[1];
+                int pid = atoi(stringPid);
                 kill(pid,SIGSTOP);
             }
-            if(strcmp(commandName,"wakeup") == 0){
-                kill(pid,SIGCONT);
-            }
-            if(strcmp(commandName,"ice") == 0){
-                kill(pid,SIGINT);
-            }
-            if(strcmp(commandName,"nuke") == 0){
-                kill(pid*-1,SIGKILL);
-            }
             else{
-                execute(line);
+                if(strcmp(commandName,"wakeup") == 0){
+                    kill(pid,SIGCONT);
+                }
+                else{
+                    if(strcmp(commandName,"ice") == 0){
+                        kill(pid,SIGINT);
+                    }
+                    else{
+                        if(strcmp(commandName,"nuke") == 0){
+                            kill(pid*-1,SIGKILL);
+                        }
+                        else{
+                            execute(line);
+                        }
+                    }
+                }
             }
         freeCmdLines(line);
         }
