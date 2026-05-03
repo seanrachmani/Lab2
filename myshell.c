@@ -53,7 +53,10 @@ void execute(cmdLine* pCmdLine){
             fprintf(stderr,"background\n");
         }   
     }
-    //wait for child:
+    //wait for child iff no & - child is in foreground - blocking is 1 - shell blocked:
+    if(pCmdLine->blocking == 1){
+        waitpid(pid,NULL,0);
+    }
 
 
 }
@@ -110,12 +113,12 @@ int main(int argc, char **argv){
             if(strcmp(line->arguments[0],"cd") == 0){
                 if(chdir(line->arguments[1])==-1){
                     fprintf(stderr,"cd operation has failed");
-                    freeCmdLines(line);
-                }
+                }  
             }
             else{
                 execute(line);
             }
+        freeCmdLines(line);
         }
     }
 }
