@@ -15,14 +15,14 @@ PRE:receives a parsed line
 POST:invokes the program specified in the cmdLine using the proper system call
 EXECV:int execv(const char* path,char* const argv[])
 path is saved in argv[0](parse did it for us), returns only in case of an error
+
+
 ==========task 1b notes:==========
-fork returns pid
-if(!(pid=fork())) bc we want to save the son id or somethign like this, might understand later
-
+1)fork returns pid
+2)if(!(pid=fork())) bc we want to save the son id or somethign like this, might understand later
+3)fork bomb is massive duplication withoud execv and without waiting for child to end -- crash...
 ==========task 1b theoretical:==========
-Although if fork( ) fails you are in real trouble anyway (e.g. fork bomb!)
-
-2)Q:If execvp fails, use _exit() (see man) to terminate the process. (Why?)
+1)Q:If execvp fails, use _exit() (see man) to terminate the process. (Why?)
   A:regular exit closes open files, print stuff etc and we dont
   want  the child to do it, bc he is the same as his father and
   we will create duplication. _exit terminate immediately 
