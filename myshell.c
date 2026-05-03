@@ -6,6 +6,9 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <sys/types.h>
+#include <signal.h>
+
 
 //global var:
 int debug = 0;
@@ -108,14 +111,31 @@ int main(int argc, char **argv){
         cmdLine* line = parseCmdLines(input);
         //if the user clicked enter etc the parsing is NULL
         if(line != NULL){
-            if(strcmp(line->arguments[0],"quit") == 0){
+            char* commandName = line->arguments[0];
+            if(strcmp(commandName,"quit") == 0){
                 freeCmdLines(line);
                 exit(0);
             }
-            if(strcmp(line->arguments[0],"cd") == 0){
+            if(strcmp(commandName,"cd") == 0){
                 if(chdir(line->arguments[1])==-1){
                     fprintf(stderr,"cd operation has failed\n");
                 }  
+            }
+            //task 2, shell commands:
+            //kill(pid,signal)
+            char* stringPid = line->arguments[1];
+            int pid = atoi(stringPid);
+            if(strcmp(commandName,"stop") == 0){
+                kill(pid,SIGSTOP);
+            }
+            if(strcmp(commandName,"wakeup") == 0){
+                kill(pid,SIGCONT);
+            }
+            if(strcmp(commandName,"ice") == 0){
+                kill(pid,SIGINT);
+            }
+            if(strcmp(commandName,"nuke") == 0){
+                kill(pid*-1,SIGKILL);
             }
             else{
                 execute(line);
