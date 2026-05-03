@@ -24,7 +24,7 @@ path is saved in argv[0](parse did it for us), returns only in case of an error
 ==========task 1b theoretical:==========
 1)Q:If execvp fails, use _exit() (see man) to terminate the process. (Why?)
   A:regular exit closes open files, print stuff etc and we dont
-  want  the child to do it, bc he is the same as his father and
+  want  the child to do it, bc he is the same as his parent and
   we will create duplication. _exit terminate immediately 
 */
 void execute(cmdLine* pCmdLine){
@@ -39,15 +39,18 @@ void execute(cmdLine* pCmdLine){
         //if we got to these line we returned aka error:
         perror("error:");
         freeCmdLines(pCmdLine);
-        _exit();
+        _exit(1);
     }
     if(debug){
-        fprintf(stderr,"PID: %ld\n file name: %s\n",pid,path);
+        //were printing info about child from the parent process
+        fprintf(stderr,"PID: %d\n file name: %s\n",pid,path);
         if(pCmdLine->blocking){
-            fprintf(stderr,"background");
+            //parent blocked, child in foreground
+            fprintf(stderr,"foreground\n");
         }
         else{
-            fprintf(stderr,"foreground");
+            //parent unblocked(available), child in background
+            fprintf(stderr,"foreground\n");
         }   
     }
     //wait for child:
@@ -83,8 +86,11 @@ sending the os ls command with this list so we get all subfolders too.
 int debug = 0;
 int main(int argc, char **argv){
     while(1){
-        if(argv[sizeof(argv)] == 'd'){
-            debug = 1;
+        //check debug:
+        for(int i=0; i<argc; i++){
+            if(strcmp(argv[i],"-d") == 0){
+                debug = 1;
+            }
         }
         char buf[PATH_MAX];
         char* path = getcwd(buf,PATH_MAX);
