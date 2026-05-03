@@ -23,7 +23,9 @@ if(!(pid=fork())) bc we want to save the son id or somethign like this, might un
 Although if fork( ) fails you are in real trouble anyway (e.g. fork bomb!)
 
 2)Q:If execvp fails, use _exit() (see man) to terminate the process. (Why?)
-  A:
+  A:regular exit closes open files, print stuff etc and we dont
+  want  the child to do it, bc he is the same as his father and
+  we will create duplication. _exit terminate immediately 
 */
 void execute(cmdLine* pCmdLine){
     const char* path = pCmdLine->arguments[0];
