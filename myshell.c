@@ -126,33 +126,29 @@ int main(int argc, char **argv){
                 //kill(pid,signal)
                 char* stringPid;
                 int pid;
-                if((strncmp(commandName,"stop") == 0)  ||
+                if(
+                (strcmp(commandName,"stop") == 0)   ||
                 (strcmp(commandName,"wakeup") == 0) ||
                 (strcmp(commandName,"ice") == 0)    ||
-                (strcmp(commandName,"nuke") == 0)){
+                (strcmp(commandName,"nuke") == 0)
+                ){
                     stringPid = line->arguments[1];
                     pid = atoi(stringPid);
                 }
                 if(strcmp(commandName,"stop") == 0){
                     kill(pid,SIGSTOP);
                 }
+                else if(strcmp(commandName,"wakeup") == 0){
+                    kill(pid,SIGCONT);
+                }
+                else if(strcmp(commandName,"ice") == 0){
+                    kill(pid,SIGINT);
+                }
+                else if(strcmp(commandName,"nuke") == 0){
+                    kill(pid*-1,SIGKILL);
+                }
                 else{
-                    if(strcmp(commandName,"wakeup") == 0){
-                        kill(pid,SIGCONT);
-                    }
-                    else{
-                        if(strcmp(commandName,"ice") == 0){
-                            kill(pid,SIGINT);
-                        }
-                        else{
-                            if(strcmp(commandName,"nuke") == 0){
-                                kill(pid*-1,SIGKILL);
-                            }
-                            else{
-                                execute(line);
-                            }
-                        }
-                    }
+                    execute(line);
                 }
             }
             freeCmdLines(line);
