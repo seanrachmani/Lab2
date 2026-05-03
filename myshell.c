@@ -4,6 +4,8 @@
 #include <linux/limits.h>
 #include "LineParser.h"
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
 //global var:
 int debug = 0;
@@ -112,7 +114,7 @@ int main(int argc, char **argv){
             }
             if(strcmp(line->arguments[0],"cd") == 0){
                 if(chdir(line->arguments[1])==-1){
-                    fprintf(stderr,"cd operation has failed");
+                    fprintf(stderr,"cd operation has failed\n");
                 }  
             }
             else{
