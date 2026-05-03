@@ -42,7 +42,7 @@ void execute(cmdLine* pCmdLine){
     //end of taken code
         execvp(path,pCmdLine->arguments);
         //if we got to these line we returned aka error:
-        perror("error:");
+        perror("execvp execute error:");
         freeCmdLines(pCmdLine);
         _exit(1);
     }
@@ -159,7 +159,6 @@ int main(int argc, char **argv){
                 }
                 else{
                     execute(line);
-                    perror("error:");
                 }
             }
             freeCmdLines(line);
