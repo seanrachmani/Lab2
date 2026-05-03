@@ -121,32 +121,41 @@ int main(int argc, char **argv){
                     fprintf(stderr,"cd operation has failed\n");
                 }  
             }
-            //task 2, shell commands:
-            //kill(pid,signal)
-            if(strcmp(commandName,"stop") == 0){
-                char* stringPid = line->arguments[1];
-                int pid = atoi(stringPid);
-                kill(pid,SIGSTOP);
-            }
             else{
-                if(strcmp(commandName,"wakeup") == 0){
-                    kill(pid,SIGCONT);
+                //task 2, shell commands:
+                //kill(pid,signal)
+                char* stringPid;
+                int pid;
+                if((strncmp(commandName,"stop") == 0)  ||
+                (strcmp(commandName,"wakeup") == 0) ||
+                (strcmp(commandName,"ice") == 0)    ||
+                (strcmp(commandName,"nuke") == 0)){
+                    stringPid = line->arguments[1];
+                    pid = atoi(stringPid);
+                }
+                if(strcmp(commandName,"stop") == 0){
+                    kill(pid,SIGSTOP);
                 }
                 else{
-                    if(strcmp(commandName,"ice") == 0){
-                        kill(pid,SIGINT);
+                    if(strcmp(commandName,"wakeup") == 0){
+                        kill(pid,SIGCONT);
                     }
                     else{
-                        if(strcmp(commandName,"nuke") == 0){
-                            kill(pid*-1,SIGKILL);
+                        if(strcmp(commandName,"ice") == 0){
+                            kill(pid,SIGINT);
                         }
                         else{
-                            execute(line);
+                            if(strcmp(commandName,"nuke") == 0){
+                                kill(pid*-1,SIGKILL);
+                            }
+                            else{
+                                execute(line);
+                            }
                         }
                     }
                 }
             }
-        freeCmdLines(line);
+            freeCmdLines(line);
         }
     }
 }
