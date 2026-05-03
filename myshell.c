@@ -155,11 +155,11 @@ int main(int argc, char **argv){
                             kill(pid*-1,SIGKILL);
                             perror("error:");
                         }
-                        else{
-                            execute(line);
-                            perror("error:");
-                        }
                     }
+                }
+                else{
+                    execute(line);
+                    perror("error:");
                 }
             }
             freeCmdLines(line);
