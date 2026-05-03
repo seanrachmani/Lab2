@@ -80,6 +80,9 @@ sending the os ls command with this list so we get all subfolders too.
 /*
 ===========myNotes==========
 1)cant use == for strings
+2)cd has to be here- cnat be child bc we need the path changing in here
+if it was the child it would change it but then die and we remain with same path
+3)int chdir(const char *path); 0 on success, -1 on failure
 */
 
 int main(int argc, char **argv){
@@ -104,7 +107,15 @@ int main(int argc, char **argv){
                 freeCmdLines(line);
                 exit(0);
             }
-            execute(line);
+            if(strcmp(line->arguments[0],"cd") == 0){
+                if(chdir(line->arguments[1])==-1){
+                    fprintf(stderr,"cd operation has failed");
+                    freeCmdLines(line);
+                }
+            }
+            else{
+                execute(line);
+            }
         }
     }
 }
