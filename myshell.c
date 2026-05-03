@@ -5,6 +5,8 @@
 #include "LineParser.h"
 #include <unistd.h>
 
+//global var:
+int debug = 0;
 
 
 
@@ -29,13 +31,11 @@ path is saved in argv[0](parse did it for us), returns only in case of an error
 */
 void execute(cmdLine* pCmdLine){
     const char* path = pCmdLine->arguments[0];
-    char* const argv[] = pCmdLine->arguments;
-    int argCount = pCmdLine->argCount;
     pid_t pid;
     //code taken from lecture 2:
     if(!(pid=fork())){ //child
     //end of taken code
-        execvp(path,argv);
+        execvp(path,pCmdLine->arguments);
         //if we got to these line we returned aka error:
         perror("error:");
         freeCmdLines(pCmdLine);
@@ -43,20 +43,18 @@ void execute(cmdLine* pCmdLine){
     }
     if(debug){
         //were printing info about child from the parent process
-        fprintf(stderr,"PID: %d\n file name: %s\n",pid,path);
+        fprintf(stderr,"PID: %d\nfile name: %s\n",pid,path);
         if(pCmdLine->blocking){
             //parent blocked, child in foreground
             fprintf(stderr,"foreground\n");
         }
         else{
             //parent unblocked(available), child in background
-            fprintf(stderr,"foreground\n");
+            fprintf(stderr,"background\n");
         }   
     }
     //wait for child:
-    while(1){
-        sleep(1);
-    }
+
 
 }
 /*
@@ -83,15 +81,15 @@ sending the os ls command with this list so we get all subfolders too.
 ===========myNotes==========
 1)cant use == for strings
 */
-int debug = 0;
+
 int main(int argc, char **argv){
-    while(1){
-        //check debug:
-        for(int i=0; i<argc; i++){
-            if(strcmp(argv[i],"-d") == 0){
-                debug = 1;
-            }
+    //check debug:
+    for(int i=0; i<argc; i++){
+        if(strcmp(argv[i],"-d") == 0){
+            debug = 1;
         }
+    }
+    while(1){
         char buf[PATH_MAX];
         char* path = getcwd(buf,PATH_MAX);
         fprintf(stdout,"current working directory is:%s\n",path);
