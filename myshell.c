@@ -133,22 +133,33 @@ int main(int argc, char **argv){
                 (strcmp(commandName,"nuke") == 0)
                 ){
                     stringPid = line->arguments[1];
-                    pid = atoi(stringPid);
-                }
-                if(strcmp(commandName,"stop") == 0){
-                    kill(pid,SIGSTOP);
-                }
-                else if(strcmp(commandName,"wakeup") == 0){
-                    kill(pid,SIGCONT);
-                }
-                else if(strcmp(commandName,"ice") == 0){
-                    kill(pid,SIGINT);
-                }
-                else if(strcmp(commandName,"nuke") == 0){
-                    kill(pid*-1,SIGKILL);
-                }
-                else{
-                    execute(line);
+                    if(stringPid==NULL){
+                        fprintf(stderr,"no valid pid\n");
+                        
+                    }
+                    else{
+                        pid = atoi(stringPid);
+                        if(strcmp(commandName,"stop") == 0){
+                            kill(pid,SIGTSTP);
+                            perror("error:");
+                        }
+                        else if(strcmp(commandName,"wakeup") == 0){
+                            kill(pid,SIGCONT);
+                            perror("error:");
+                        }
+                        else if(strcmp(commandName,"ice") == 0){
+                            kill(pid,SIGINT);
+                            perror("error:");
+                        }
+                        else if(strcmp(commandName,"nuke") == 0){
+                            kill(pid*-1,SIGKILL);
+                            perror("error:");
+                        }
+                        else{
+                            execute(line);
+                            perror("error:");
+                        }
+                    }
                 }
             }
             freeCmdLines(line);
