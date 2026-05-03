@@ -9,20 +9,50 @@
 
 
 /*
-==========task 0a:==========
 ==========execute==========
+==========task 0a notes:==========
 PRE:receives a parsed line
 POST:invokes the program specified in the cmdLine using the proper system call
 EXECV:int execv(const char* path,char* const argv[])
 path is saved in argv[0](parse did it for us), returns only in case of an error
+==========task 1b notes:==========
+fork returns pid
+if(!(pid=fork())) bc we want to save the son id or somethign like this, might understand later
+
+==========task 1b theoretical:==========
+Although if fork( ) fails you are in real trouble anyway (e.g. fork bomb!)
+
+2)Q:If execvp fails, use _exit() (see man) to terminate the process. (Why?)
+  A:
 */
 void execute(cmdLine* pCmdLine){
-    int error = execvp(pCmdLine->arguments[0],pCmdLine->arguments);
-    if(error == -1){
+    const char* path = pCmdLine->arguments[0];
+    char* const argv[] = pCmdLine->arguments;
+    int argCount = pCmdLine->argCount;
+    pid_t pid;
+    //code taken from lecture 2:
+    if(!(pid=fork())){ //child
+    //end of taken code
+        execvp(path,argv);
+        //if we got to these line we returned aka error:
         perror("error:");
         freeCmdLines(pCmdLine);
-        exit(1);
+        _exit();
     }
+    if(debug){
+        fprintf(stderr,"PID: %ld\n file name: %s\n",pid,path);
+        if(pCmdLine->blocking){
+            fprintf(stderr,"background");
+        }
+        else{
+            fprintf(stderr,"foreground");
+        }   
+    }
+    //wait for child:
+    while(1){
+        sleep(1);
+    }
+
 }
 /*
 ==========0a theoretical==========
@@ -48,8 +78,12 @@ sending the os ls command with this list so we get all subfolders too.
 ===========myNotes==========
 1)cant use == for strings
 */
+int debug = 0;
 int main(int argc, char **argv){
     while(1){
+        if(argv[sizeof(argv)] == 'd'){
+            debug = 1;
+        }
         char buf[PATH_MAX];
         char* path = getcwd(buf,PATH_MAX);
         fprintf(stdout,"current working directory is:%s\n",path);
