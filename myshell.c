@@ -40,6 +40,40 @@ void execute(cmdLine* pCmdLine){
     //code taken from lecture 2:
     if(!(pid=fork())){ //child
     //end of taken code
+        //task 3 - redirection:
+        //note: in the next part we override stdin stdout and then execv will use our fds
+        char const* in = pCmdLine->inputRedirect;	
+        char const* out = pCmdLine->outputRedirection;
+        int inFd,outFd;
+        if(in != NULL){
+            inFd = open(in);
+            if(inFd == -1){
+                perror("open input error:\n");
+            }
+            else{
+                //its fine to close 0 since its child. O Is fd for stdin 
+                close(0);
+                //npw fd=0 is available
+                dup(inFd);
+                //now our file is loaded to input fd(dup using the lowest unused fd and its 0 bc were just cleared it)
+                close(inFd);
+            }  
+        }
+        if(out != null){
+            outFd = open(out,O_CREAT,O_TRUNC);
+            if(outFd == -1){
+                perror("open output error:\n");
+            }
+            else{
+                //1 is fd for stdout
+                close(1);
+                //now 1 is available for dup:
+                dup(outFd);
+                //now our file is loaded to stdput
+                close(outFd);
+            }
+        }
+
         execvp(path,pCmdLine->arguments);
         //if we got to these line we returned aka error:
         perror("execvp execute error:");
@@ -141,19 +175,15 @@ int main(int argc, char **argv){
                         pid = atoi(stringPid);
                         if(strcmp(commandName,"stop") == 0){
                             kill(pid,SIGTSTP);
-                            perror("error:");
                         }
                         else if(strcmp(commandName,"wakeup") == 0){
                             kill(pid,SIGCONT);
-                            perror("error:");
                         }
                         else if(strcmp(commandName,"ice") == 0){
                             kill(pid,SIGINT);
-                            perror("error:");
                         }
                         else if(strcmp(commandName,"nuke") == 0){
                             kill(pid*-1,SIGKILL);
-                            perror("error:");
                         }
                     }
                 }
