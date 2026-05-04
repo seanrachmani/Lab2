@@ -49,7 +49,7 @@ void execute(cmdLine* pCmdLine){
         if(in != NULL){
             inFd = open(in,O_RDONLY);
             if(inFd == -1){
-                perror("open input error:\n");
+                perror("open input error:");
                 freeCmdLines(pCmdLine);
                 _exit(1);
             }
@@ -65,9 +65,9 @@ void execute(cmdLine* pCmdLine){
         if(out != NULL){
             //trunc- ride existed file. 
             //open(path,flags,permissions)
-            outFd = open(out,O_WRONLY|O_CREAT|O_TRUNC,S_IRUSR,S_IWUSR);
+            outFd = open(out,O_WRONLY|O_CREAT|O_TRUNC,S_IRUSR|S_IWUSR);
             if(outFd == -1){
-                perror("open output error:\n");
+                perror("open output error:");
                 freeCmdLines(pCmdLine);
                 _exit(1);
             }
@@ -80,7 +80,6 @@ void execute(cmdLine* pCmdLine){
                 close(outFd);
             }
         }
-
         execvp(path,pCmdLine->arguments);
         //if we got to these line we returned aka error:
         perror("execvp execute error:");
@@ -103,9 +102,9 @@ void execute(cmdLine* pCmdLine){
     if(pCmdLine->blocking == 1){
         waitpid(pid,NULL,0);
     }
-
-
 }
+
+
 /*
 ==========0a theoretical==========
 1)deleting main memory:
