@@ -20,11 +20,13 @@ void handler(int sig)
 	//if im stopping prepare for continue
 	if (sig == SIGTSTP)
 	{
+		//changed from SIG_DFL  to handler
 		signal(SIGCONT, handler);
 	}
 	//if im waking up(continue) make sure that prepare to be stoped again
 	else if (sig == SIGCONT)
 	{
+		//changed from SIG_DFL  to handler
 		signal(SIGTSTP, handler);
 	}
 	//now we mark the os that default handler will 'execute" the signal and not our handler
