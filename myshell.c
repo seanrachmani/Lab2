@@ -6,8 +6,9 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <sys/types.h>
 #include <signal.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 
 //global var:
@@ -43,12 +44,14 @@ void execute(cmdLine* pCmdLine){
         //task 3 - redirection:
         //note: in the next part we override stdin stdout and then execv will use our fds
         char const* in = pCmdLine->inputRedirect;	
-        char const* out = pCmdLine->outputRedirection;
+        char const* out = pCmdLine->outputRedirect;
         int inFd,outFd;
         if(in != NULL){
-            inFd = open(in);
+            inFd = open(in,O_RDONLY);
             if(inFd == -1){
                 perror("open input error:\n");
+                freeCmdLines(pCmdLine);
+                _exit(1);
             }
             else{
                 //its fine to close 0 since its child. O Is fd for stdin 
@@ -59,10 +62,14 @@ void execute(cmdLine* pCmdLine){
                 close(inFd);
             }  
         }
-        if(out != null){
-            outFd = open(out,O_CREAT,O_TRUNC);
+        if(out != NULL){
+            //trunc- ride existed file. 
+            //open(path,flags,permissions)
+            outFd = open(out,O_WRONLY|O_CREAT|O_TRUNC,S_IRUSR,S_IWUSR);
             if(outFd == -1){
                 perror("open output error:\n");
+                freeCmdLines(pCmdLine);
+                _exit(1);
             }
             else{
                 //1 is fd for stdout
