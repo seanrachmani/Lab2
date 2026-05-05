@@ -7,7 +7,7 @@ int main(int argc, char **argv)
     int i, pid;
 	setpgid(0,0);
 	
-	if(pid=fork()) {
+	if((pid=fork())) {
 	  i=0;
 	}
 	else i=1;

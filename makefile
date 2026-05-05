@@ -1,5 +1,5 @@
 #link
-all : myshell Printers looper
+all : myshell Printers looper mypipe
 
 mypipe : mypipe.o
 	gcc -m32 -g -Wall -o mypipe mypipe.o

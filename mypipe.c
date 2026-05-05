@@ -12,8 +12,8 @@ int main(int argc, char **argv){
     int fd[2]; 
     pipe(fd);
     //read is 0, write is 1, child reads, parent write
-    //code taken from lecture 2:
     pid_t pid;
+    //code taken from lecture 2:
     if(!(pid=fork())){ //child
     //end of taken code
         close(fd[1]);
